@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Function not defined</title>
+  </head>
+  <body>
+    <div id="API">APIs</div>
+    <div id="weather">
+        <div id="description"></div>
+        <h1 id="temp"></h1>
+        <div id="location"></div>
+    </div>
+    <div id="fire"></div>
+    <button id="action" onclick="weather()">Click me</button>
+    <script type="text/javascript">
+        function drawWeather( d ) {
+            var fahrenheit = Math.round(((parseFloat(d.main.temp)-273.15)*1.8)+32); 
+            
+            document.getElementById('description').innerHTML = d.weather[0].description;
+            document.getElementById('temp').innerHTML = fahrenheit + '&deg;';
+            document.getElementById('location').innerHTML = d.name;
+        }
+        function fireAPI(link){
+            fetch(link, {
+                "method": "GET",
+                "headers": {
+                    "x-api-key": "f2bb5ee119ee77dcd5ccdd8a54f9323c6ec8cb05973c01a63e51bd8ca7b6b8cb",
+                    "Content-type": "application/json"
+                }
+                })	
+                .then(function(resp) { return resp.json() }) // Convert data to json
+                .then(function(data) {
+                    console.log(data);
+                    if (data.message === "No fires were detected") {
+                        document.getElementById('fire').innerHTML = "low"
+                     }
+                    else {
+                        document.getElementById('fire').innerHTML = "high"
+                        document.getElementById('fire').style.color = "red"
+                    }
+                })
+                .catch(function() {
+                    // catch any errors
+                });
+        }
+        // function pollenAPI(){
+        //     fetch(fireAPILink, {
+        //         "method": "GET",
+        //         "headers": {
+        //             "x-api-key": "f2bb5ee119ee77dcd5ccdd8a54f9323c6ec8cb05973c01a63e51bd8ca7b6b8cb",
+        //             "Content-type": "application/json"
+        //         }
+        //         })	
+        //         .then(function(resp) { return resp.json() }) // Convert data to json
+        //         .then(function(data) {
+        //             console.log(data);
+        //             document.getElementById('fire').innerHTML = data.message
+        //         })
+        //         .catch(function() {
+        //             // catch any errors
+        //         });
+        // }
+        function weatherBalloon(){
+            const API_KEY = "64b38d3f58717f4e8c8c6a8033addac1";
+            const city_name = prompt("City name?: ");
+            const base_url =  "http://api.openweathermap.org/data/2.5/weather?";
+            const final_url_geocoding = base_url + "appid=" + API_KEY + "&q=" + city_name;
+            const coords = async function weatherAPI() {
+                let resp = await fetch(final_url_geocoding);
+                let data = await resp.json(); 
+                console.log(data);
+                drawWeather(data);
+                let lat = data.coord.lat;
+                let long = data.coord.lon; 
+                let fireAPILink = "https://api.ambeedata.com/latest/fire?lat=" + lat +  "&lng=" + long
+                // let pollenAPILink = 
+                let droughtAPILink = "https://api.weather.gov/points/" + lat + "," + long
+
+            fireAPI(fireAPILink)
+            fetch(droughtAPILink)
+            .then(response => response.json())
+            .then(data => {
+            console.log("THis is response.data");
+            console.log(data)})
+            .catch(err => {
+            console.log(err);
+            })
+            
+            // "https://api.ambeedata.com/latest/fire?lat=12.9889055&lng=77.574044"
+            
+            
+    }
+    coords()
+}
+
+        // function fireAPI(){
+        //     const API_KEY = "64b38d3f58717f4e8c8c6a8033addac1";
+        //     const base_url =  "http://api.openweathermap.org/data/2.5/weather?";
+        //     const final_url_geocoding = base_url + "appid=" + API_KEY + "&q=" + city_name;
+        //     fetch(final_url_geocoding)  
+        //     .then(function(resp) { return resp.json() }) // Convert data to json
+        //     .then(function(data) {
+        //         console.log(data)
+        //         console.log("Fire API" + data.visibility);
+        //         const getValue = document.getElementById('API');
+        //         getValue.innerText = data.clouds
+        //     })
+        //     .catch(function() {
+        //         // catch any errors
+        //     });
+
+
+        // function fireAPI(){    
+        //     fetch("https://api.ambeedata.com/latest/fire?lat=12.9889055&lng=77.574044", {
+        //     "method": "GET",
+        //     "headers": {
+        //         "x-api-key": "f2bb5ee119ee77dcd5ccdd8a54f9323c6ec8cb05973c01a63e51bd8ca7b6b8cb",
+        //         "Content-type": "application/json"
+        //     }
+        //     })	
+        //     .then(response => {
+        //         console.log(response);
+        //     })
+        //     .catch(err => {
+        //         console.error(err);
+        //     });
+        // }
+
+        
+    </script>
+  </body>
+</html>
+<style>
+    div {
+        background: red;
+        width: 25%;
+        margin: auto;
+        font-size: 80px;
+        margin: auto;
+        text-align: center;
+    }
+    body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    font-size: 1.3em;
+    color: #fff;
+    text-shadow: .1em .1em 0 rgba(0,0,0,0.3);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: linear-gradient(to right top, #99bbcb, #a5c7d7, #b1d4e2, #bde0ee, #c9edfa);
+}
+h1 {
+    margin: 0 auto;
+    font-size: 2.2em;
+    text-align: center;
+    color: #fff;
+    font-size: 3em;
+}
+body.sunny {
+    background-image: linear-gradient(to right top, #ff4e50, #ff713e, #ff932b, #ffb41d, #f9d423);
+}
+body.cloudy {
+    background-image: linear-gradient(to right top, #63747c, #71858e, #7f96a0, #8da8b2, #9bbac5);
+}
+body.rainy {
+    background-image: linear-gradient(to right top, #637c7b, #718e8c, #7ea09e, #8db2b0, #9bc5c3);
+}
+</style>
